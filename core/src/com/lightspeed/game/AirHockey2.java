@@ -90,8 +90,10 @@ public class AirHockey2 extends ApplicationAdapter implements InputProcessor {
 
 	String scoreboardString = "00 00";
 	int scoreboardSize = 52;
-	float scoreboardX = -(34*5)/2;
+	float scoreboardX = -390;
 	float scoreboardY = WORLD_HEIGHT/2+50;
+
+	long startTime = System.currentTimeMillis();
 
 	@Override
 	public void create () {
@@ -202,7 +204,7 @@ public class AirHockey2 extends ApplicationAdapter implements InputProcessor {
 		//controlling the scene
 		debugRenderer = new Box2DDebugRenderer();
 
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/LCDPHONE.TTF"));
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/repet.ttf"));
 		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 		parameter.size = scoreboardSize;
 		font = generator.generateFont(parameter); // font size 12 pixels
@@ -275,6 +277,20 @@ public class AirHockey2 extends ApplicationAdapter implements InputProcessor {
 		touchSprite.setPosition((touchBodyLeft.getPosition().x*PIXELS_TO_METERS)- touchSprite.getWidth()/2,
 				(touchBodyLeft.getPosition().y*PIXELS_TO_METERS)- touchSprite.getHeight()/2);
 		touchSprite.draw(batch);
+
+		int player1score = scoreboard.getPlayerScore(0);
+		int player2score = scoreboard.getPlayerScore(1);
+		if(showScore) {
+			long elapsedTime = System.currentTimeMillis() - startTime;
+			long second = (elapsedTime / 1000) % 60;
+			long minute = (elapsedTime / (1000 * 60)) % 60;
+			long hour = (elapsedTime / (1000 * 60 * 60)) % 24;
+
+			String time = String.format("%02d:%02d", minute, second);
+
+			scoreboardString = String.format("P1: %02d     "+time+"     P2: %02d", player1score, player2score);
+		}
+
 		font.draw(batch, scoreboardString, scoreboardX, scoreboardY);
 
 		batch.end();
@@ -288,18 +304,32 @@ public class AirHockey2 extends ApplicationAdapter implements InputProcessor {
 
 	}
 
+	boolean showScore = true;
+	double totalTime = 0;
+	double goalDisplayTime = 2;
+	double endGoalTime = 0;
 	private void update(final float dt)
 	{
-		float puckPosition = puckBody.getPosition().x*PIXELS_TO_METERS;
+		totalTime += dt;
+		if(!showScore && totalTime > endGoalTime) {
+			showScore = true;
+		}
 
+		float puckPosition = puckBody.getPosition().x*PIXELS_TO_METERS;
 		if(puckPosition > WORLD_WIDTH/2+touchSprite.getWidth()/2) {
-			Gdx.app.log("UP", "GOAL FOR PLAYER 1 !!!!: "+puckPosition);
+			Gdx.app.log("UP", "GOAL FOR PLAYER 1 !!!: "+puckPosition);
 			scoreboard.incrementScoreCount(0);
 			resetWorldBodies();
+			showScore = false;
+			scoreboardString = "    GOAL FOR PLAYER 1 !!!";
+			endGoalTime = totalTime+goalDisplayTime;
 		} else if(puckPosition < -WORLD_WIDTH/2-touchSprite.getWidth()/2) {
-			Gdx.app.log("UP", "GOAL FOR PLAYER 2 !!!!: "+puckPosition);
+			Gdx.app.log("UP", "GOAL FOR PLAYER 2 !!!: "+puckPosition);
 			scoreboard.incrementScoreCount(1);
 			resetWorldBodies();
+			showScore = false;
+			scoreboardString = "    GOAL FOR PLAYER 2 !!!";
+			endGoalTime = totalTime+goalDisplayTime;
 		}
 
 		float touchLeftPosition = touchBodyLeft.getPosition().x*PIXELS_TO_METERS;
@@ -315,10 +345,6 @@ public class AirHockey2 extends ApplicationAdapter implements InputProcessor {
 				touchRightPosition < -WORLD_WIDTH/2-touchSprite.getWidth()/2+trimSize)  {
 			resetRightTouch();
 		}
-
-		int player1score = scoreboard.getPlayerScore(0);
-		int player2score = scoreboard.getPlayerScore(1);
-		scoreboardString = String.format("%02d %02d", player1score, player2score);
 	}
 
 	public Pixmap getPixmapRoundedRectangle(float fwidth, float fheight, float fradius, Color color) {
@@ -487,17 +513,17 @@ public class AirHockey2 extends ApplicationAdapter implements InputProcessor {
 
 		if(testPoint.y/PIXELS_TO_METERS < -h/2 || testPoint.y/PIXELS_TO_METERS > h/2
 				|| testPoint.x/PIXELS_TO_METERS < -w/2 || testPoint.x/PIXELS_TO_METERS > w/2) {
-			puckBody.setTransform(0, 0, 0);
-			puckBody.setLinearVelocity(0, 0);
-			puckBody.setAngularVelocity(0);
-
-			touchBodyRight.setTransform(w / 4, 0, 0);
-			touchBodyRight.setLinearVelocity(0, 0);
-			touchBodyRight.setAngularVelocity(0);
-
-			touchBodyLeft.setTransform(-w / 4, 0, 0);
-			touchBodyLeft.setLinearVelocity(0, 0);
-			touchBodyLeft.setAngularVelocity(0);
+//			puckBody.setTransform(0, 0, 0);
+//			puckBody.setLinearVelocity(0, 0);
+//			puckBody.setAngularVelocity(0);
+//
+//			touchBodyRight.setTransform(w / 4, 0, 0);
+//			touchBodyRight.setLinearVelocity(0, 0);
+//			touchBodyRight.setAngularVelocity(0);
+//
+//			touchBodyLeft.setTransform(-w / 4, 0, 0);
+//			touchBodyLeft.setLinearVelocity(0, 0);
+//			touchBodyLeft.setAngularVelocity(0);
 		} else {
 			// ask the world which bodies are within the given
 			// bounding box around the mouse pointer
