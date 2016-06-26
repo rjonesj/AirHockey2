@@ -5,7 +5,7 @@ import org.robovm.apple.uikit.UIApplication;
 
 import com.badlogic.gdx.backends.iosrobovm.IOSApplication;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
-import com.lightspeed.game.AirHockey2;
+import com.lightspeed.examples.AirHockey2;
 
 public class IOSLauncher extends IOSApplication.Delegate {
     @Override
