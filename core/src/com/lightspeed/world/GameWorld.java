@@ -9,25 +9,24 @@ import com.badlogic.gdx.math.Rectangle;
 public class GameWorld {
 //    private Bird bird;
 //    private ScrollHandler scroller;
-    private Rectangle ground;
+//    private Rectangle ground;
     private GameState currentState;
     private int score = 0;
     private float runTime = 0;
-    public int midPointY;
 
     public enum GameState {
         MENU, READY, RUNNING, GAMEOVER, HIGHSCORE
     }
 
-    public GameWorld(int midPointY) {
+    public GameWorld() {
         currentState = GameState.MENU;
-        this.midPointY = midPointY;
+//        this.midPointY = midPointY;
         // Initialize bird here
 //        bird = new Bird(33, midPointY - 5, 17, 12);
         //Initialize the scroller
         //The grass should start 66 pixels below the midPointY
 //        scroller = new ScrollHandler(this, midPointY + 66);
-        ground = new Rectangle(0, midPointY + 66, 136, 11);
+//        ground = new Rectangle(0, midPointY + 66, 136, 11);
 
     }
 
@@ -135,7 +134,4 @@ public class GameWorld {
 //        return scroller;
 //    }
 
-    public int getMidPointY() {
-        return midPointY;
-    }
 }

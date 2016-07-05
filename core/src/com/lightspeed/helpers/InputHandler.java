@@ -15,30 +15,11 @@ public class InputHandler implements InputProcessor {
     private GameWorld myWorld;
 //    private Bird myBird;
 
-    private List<SimpleButton> menuButtons;
-    private SimpleButton playButton;
-
-    private float scaleFactorX;
-    private float scaleFactorY;
-
     // Ask for a reference to the Bird when InputHandler is created.
-    public InputHandler(GameWorld myWorld, float scaleFactorX,
-                        float scaleFactorY) {
+    public InputHandler(GameWorld myWorld) {
         // myBird now represents the gameWorld's bird.
         this.myWorld = myWorld;
 //        myBird = myWorld.getBird();
-
-        int midPointY = myWorld.getMidPointY();
-
-        this.scaleFactorX = scaleFactorX;
-        this.scaleFactorY = scaleFactorY;
-
-        menuButtons = new ArrayList<SimpleButton>();
-        playButton = new SimpleButton(
-                136 / 2 - (AssetLoader.playButtonUp.getRegionWidth() / 2),
-                midPointY + 50, 29, 16, AssetLoader.playButtonUp,
-                AssetLoader.playButtonDown);
-        menuButtons.add(playButton);
     }
 
 
@@ -66,7 +47,7 @@ public class InputHandler implements InputProcessor {
     }
 
     /**
-     * Called when the screen was touched or a mouse button was pressed. The button parameter will be {@link Buttons#LEFT} on iOS.
+     * Called when the screen was touched or a mouse button was pressed.
      *
      * @param screenX The x coordinate, origin is in the upper left corner
      * @param screenY The y coordinate, origin is in the upper left corner
@@ -77,12 +58,8 @@ public class InputHandler implements InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 
-        screenX = scaleX(screenX);
-        screenY = scaleY(screenY);
         System.out.println(screenX + " " + screenY);
         if (myWorld.isMenu()) {
-            playButton.isTouchDown(screenX, screenY);
-        } else if (myWorld.isReady()) {
             myWorld.start();
         }
 
@@ -96,7 +73,7 @@ public class InputHandler implements InputProcessor {
     }
 
     /**
-     * Called when a finger was lifted or a mouse button was released. The button parameter will be {@link Buttons#LEFT} on iOS.
+     * Called when a finger was lifted or a mouse button was released.
      *
      * @param screenX
      * @param screenY
@@ -106,14 +83,9 @@ public class InputHandler implements InputProcessor {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 
-        screenX = scaleX(screenX);
-        screenY = scaleY(screenY);
-
         if (myWorld.isMenu()) {
-            if (playButton.isTouchUp(screenX, screenY)) {
-                myWorld.ready();
-                return true;
-            }
+            myWorld.start();
+            return true;
         }
 
         return false;
@@ -132,8 +104,6 @@ public class InputHandler implements InputProcessor {
         if (keycode == Input.Keys.SPACE) {
 
             if (myWorld.isMenu()) {
-                myWorld.ready();
-            } else if (myWorld.isReady()) {
                 myWorld.start();
             }
 
@@ -146,18 +116,6 @@ public class InputHandler implements InputProcessor {
         }
 
         return false;
-    }
-
-    private int scaleX(int screenX) {
-        return (int) (screenX / scaleFactorX);
-    }
-
-    private int scaleY(int screenY) {
-        return (int) (screenY / scaleFactorY);
-    }
-
-    public List<SimpleButton> getMenuButtons() {
-        return menuButtons;
     }
 
     /**

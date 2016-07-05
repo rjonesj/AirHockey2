@@ -1,6 +1,7 @@
 package com.lightspeed.world;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,8 +11,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.lightspeed.airhockey.AirHockeyGame;
 import com.lightspeed.helpers.AssetLoader;
 import com.lightspeed.helpers.InputHandler;
+import com.lightspeed.screens.PlayScreen;
 import com.lightspeed.tweenaccessors.Value;
 import com.lightspeed.tweenaccessors.ValueAccessor;
 import com.lightspeed.ui.SimpleButton;
@@ -27,6 +30,7 @@ import aurelienribon.tweenengine.TweenManager;
  */
 public class GameRenderer {
 
+    private AirHockeyGame game;
     private GameWorld myWorld;
     private OrthographicCamera camera;
     private ExtendViewport viewport;
@@ -56,10 +60,8 @@ public class GameRenderer {
     private TweenManager manager;
     private Value alpha = new Value();
 
-    // Buttons
-    private List<SimpleButton> menuButtons;
-
-    public GameRenderer(GameWorld world) {
+    public GameRenderer(GameWorld world, AirHockeyGame game) {
+        this.game = game;
         myWorld = world;
 
         // The word "this" refers to this instance.
@@ -69,11 +71,6 @@ public class GameRenderer {
 //        this.menuButtons = ((InputHandler) Gdx.input.getInputProcessor())
 //                .getMenuButtons();
         InputHandler input = (InputHandler) Gdx.input.getInputProcessor();
-        if(input != null) {
-            this.menuButtons = input.getMenuButtons();
-        } else {
-            Gdx.app.log("GameRenderer", "getInputProcessor returned null!");
-        }
 
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(gameWidth+borderWidth,gameHeight+borderWidth*2, camera);
@@ -82,10 +79,8 @@ public class GameRenderer {
 
         viewport = new ExtendViewport(gameWidth,gameHeight, camera);
         camera.position.set(0,0,0);
-        Texture texture = new Texture(Gdx.files.internal("data/startscreen.png"));
-        startScreen = new Sprite(texture);
-        startScreen.setSize(gameWidth,gameHeight);
-        startScreen.setPosition(-startScreen.getWidth()/2, -startScreen.getHeight()/2);
+        AssetLoader.startScreen.setSize(gameWidth,gameHeight);
+        AssetLoader.startScreen.setPosition(-AssetLoader.startScreen.getWidth()/2, -AssetLoader.startScreen.getHeight()/2);
 
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
@@ -106,6 +101,7 @@ public class GameRenderer {
 
     private void initGameObjects() {
 //        bird = myWorld.getBird();
+
 //        scroller = myWorld.getScroller();
 //        frontGrass = scroller.getFrontGrass();
 //        backGrass = scroller.getBackGrass();
@@ -116,7 +112,7 @@ public class GameRenderer {
 
     private void initAssets() {
         bg = AssetLoader.bg;
-//        startScreen = AssetLoader.startScreen;
+        startScreen = AssetLoader.startScreen;
         birdAnimation = AssetLoader.birdAnimation;
         birdMid = AssetLoader.bird;
         birdDown = AssetLoader.birdDown;
@@ -194,17 +190,6 @@ public class GameRenderer {
 //        }
 //    }
 
-    private void drawMenuUI() {
-        batch.draw(AssetLoader.zbLogo, 136 / 2 - 56, midPointY - 50,
-                AssetLoader.zbLogo.getRegionWidth() / 1.2f,
-                AssetLoader.zbLogo.getRegionHeight() / 1.2f);
-
-        for (SimpleButton button : menuButtons) {
-            button.draw(batch);
-        }
-
-    }
-
     private void drawScore() {
         int length = ("" + myWorld.getScore()).length();
         AssetLoader.shadow.draw(batch, "" + myWorld.getScore(),
@@ -223,13 +208,8 @@ public class GameRenderer {
         AssetLoader.font.draw(batch, "Try again?", 24, 75);
     }
 
-    private void drawStartGame() {
-        // Draw shadow first
-        AssetLoader.shadow.draw(batch, "Start Game", (136 / 2)
-                - (52), 76);
-        // Draw text
-        AssetLoader.font.draw(batch, "Start Game", (136 / 2)
-                - (52 - 1), 75);
+    private void drawStartScreen() {
+        startScreen.draw(batch);
     }
 
     private void drawGameOver() {
@@ -281,28 +261,32 @@ public class GameRenderer {
 //        drawPipes();
 //        drawSkulls();
 
-        if (myWorld.isRunning()) {
+        if (myWorld.isMenu()) {
+            Gdx.app.log("RENDER", "In menu!");
+            drawStartScreen();
+        } else if (myWorld.isRunning()) {
+            Gdx.app.log("RENDER", "Is Running!");
+            PlayScreen playScreen = new PlayScreen();
+            playScreen.create();
+            game.setScreen(playScreen);
 //            drawBird(runTime);
-            drawScore();
+//            drawScore();
         } else if (myWorld.isReady()) {
-//            drawBird(runTime);
-            drawStartGame();
+            Gdx.app.log("RENDER", "Is Reddy!!");
 
-//            drawBirdCentered(runTime);
-//            drawMenuUI();
-        } else if (myWorld.isMenu()) {
-//            Gdx.app.log("RENDER", "In menu!");
 //            drawBird(runTime);
-//            drawStartGame();
+//            drawStartScreen();
 
 //            drawBirdCentered(runTime);
 //            drawMenuUI();
         } else if (myWorld.isGameOver()) {
+            Gdx.app.log("RENDER", "Game over");
 //            drawBird(runTime);
             drawScore();
             drawGameOver();
             drawTryAgain();;
         } else if (myWorld.isHighScore()) {
+            Gdx.app.log("RENDER", "High Score!");
 //            drawBird(runTime);
             drawScore();
 //            drawGameOver();

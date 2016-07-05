@@ -80,7 +80,6 @@ public class AssetLoader {
 
         texture = new Texture(Gdx.files.internal("data/startscreen.png"));
         startScreen = new Sprite(texture);
-        startScreen.setPosition(-startScreen.getWidth()/2, -startScreen.getHeight()/2);
 
         dead = Gdx.audio.newSound(Gdx.files.internal("zbird/dead48.wav"));
         flap = Gdx.audio.newSound(Gdx.files.internal("zbird/flap48.wav"));
@@ -98,10 +97,10 @@ public class AssetLoader {
             prefs.putInteger("highScore", 0);
         }
 
-        //Put on some tunes
-        bgMusic = Gdx.audio.newMusic(Gdx.files.internal("zbird/2ndballad.wav"));
-        bgMusic.setLooping(true);
-        bgMusic.play();
+//        //Put on some tunes
+//        bgMusic = Gdx.audio.newMusic(Gdx.files.internal("zbird/2ndballad.wav"));
+//        bgMusic.setLooping(true);
+//        bgMusic.play();
     }
 
     // Receives an integer and maps it to the String highScore in prefs

@@ -10,7 +10,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.width = 800;
 		config.height = 400;
-		new LwjglApplication(new AirHockey2(), config);
-//		new LwjglApplication(new AirHockeyGame(), config);
+//		new LwjglApplication(new AirHockey2(), config);
+		new LwjglApplication(new AirHockeyGame(), config);
 	}
 }

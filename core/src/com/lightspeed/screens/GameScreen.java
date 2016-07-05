@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.lightspeed.airhockey.AirHockeyGame;
 import com.lightspeed.helpers.InputHandler;
 import com.lightspeed.world.GameRenderer;
 import com.lightspeed.world.GameWorld;
@@ -16,18 +17,19 @@ public class GameScreen implements Screen {
     private GameWorld world;
     private GameRenderer renderer;
     private float runTime = 0;
+    private AirHockeyGame game;
 
-    public GameScreen() {
+    public GameScreen(AirHockeyGame game) {
 
+        this.game = game;
         float screenWidth = Gdx.graphics.getWidth();
         float screenHeight = Gdx.graphics.getHeight();
         float gameWidth = 800;
         float gameHeight = 400;
-        int midPointY = (int) (gameHeight / 2);
 
-        world = new GameWorld(midPointY); // initialize world
-        Gdx.input.setInputProcessor(new InputHandler(world, screenWidth / gameWidth, screenHeight / gameHeight));
-        renderer = new GameRenderer(world); // initialize renderer
+        world = new GameWorld(); // initialize world
+        Gdx.input.setInputProcessor(new InputHandler(world));
+        renderer = new GameRenderer(world, game); // initialize renderer
 
         Gdx.app.log("GameScreen", "ScreenWidth: " + screenWidth + ", screenHeight: " + screenHeight + ", gameWidth: " + gameWidth + ", gameHeight: " + gameHeight);
     }
